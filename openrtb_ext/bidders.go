@@ -186,7 +186,7 @@ var coreBidderNames []BidderName = []BidderName{
 	BidderMobileFuse,
 	BidderMobkoi,
 	BidderMotorik,
-	BidderNativery ,
+	BidderNativery,
 	BidderNativo,
 	BidderNextMillennium,
 	BidderNexx360,
