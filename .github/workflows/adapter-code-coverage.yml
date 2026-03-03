@@ -1,7 +1,7 @@
 name: Adapter Code Coverage
 
 on:
-  pull_request_target:
+  pull_request:
     paths: ["adapters/*/*.go"]
 
 permissions:
@@ -21,8 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Discover Adapter Directories
         id: get_directories
@@ -71,6 +70,7 @@ jobs:
           rm -f -r ./*
 
       - name: Checkout Coverage Preview Branch
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -78,7 +78,7 @@ jobs:
           repository: prebid/prebid-server
 
       - name: Upload Coverage Results
-        if: steps.run_coverage.outputs.coverage_dir != ''
+        if: steps.run_coverage.outputs.coverage_dir != '' && github.event.pull_request.head.repo.full_name == github.repository
         id: commit_coverage
         run: |
           directory=.github/preview/${{ github.run_id }}_$(date +%s)
@@ -92,11 +92,11 @@ jobs:
           echo "remote_coverage_preview_dir=${directory}" >> $GITHUB_OUTPUT
 
       - name: Checkout Master Branch
-        if: steps.get_directories.outputs.result != ''
+        if: steps.get_directories.outputs.result != '' && github.event.pull_request.head.repo.full_name == github.repository
         run: git checkout master
 
       - name: Add Coverage Summary To Pull Request
-        if: steps.run_coverage.outputs.coverage_dir != '' && steps.commit_coverage.outputs.remote_coverage_preview_dir != ''
+        if: steps.run_coverage.outputs.coverage_dir != '' && steps.commit_coverage.outputs.remote_coverage_preview_dir != '' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v7
         with:
           script: |
