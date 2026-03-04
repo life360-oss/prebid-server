@@ -1,4 +1,5 @@
 endpoint: "https://exchange.postrelease.com/esi?ntv_epid=7"
+endpointCompression: gzip
 maintainer:
   email: "prebiddev@nativo.com"
 gvlVendorID: 263
